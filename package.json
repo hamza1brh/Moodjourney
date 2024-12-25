@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.5",
-    "@neondatabase/serverless": "^0.10.4",
-    "@prisma/adapter-neon": "^6.1.0",
     "@prisma/client": "^6.1.0",
     "@types/node": "22.10.2",
     "@types/react": "19.0.2",
