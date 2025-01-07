@@ -8,8 +8,17 @@ const NewEntryCard = () => {
   const router = useRouter();
 
   const handleOnClick = async () => {
-    let data = await createNewEntry();
-    router.push(`/journal/${data.id}`);
+    try {
+      const data = await createNewEntry();
+      if (!data) {
+        console.error("No data returned from createNewEntry");
+        return;
+      }
+      router.push(`/journal/${data.id}`);
+    } catch (error) {
+      console.error("Error creating new entry:", error);
+      // Handle error appropriately - could show user feedback here
+    }
   };
 
   return (

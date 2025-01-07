@@ -3,22 +3,26 @@ import { prisma } from "@/utils/db";
 import { NextResponse } from "next/server";
 
 export const POST = async () => {
-  const user = await getUserByClerkId();
-  const entry = await prisma.journalEntry.create({
-    data: {
-      userId: user.id,
-      content: "Write about your day!",
-    },
-  });
+  try {
+    const user = await getUserByClerkId();
 
-  return NextResponse.json({ data: entry });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const entry = await prisma.journalEntry.create({
+      data: {
+        userId: user.id,
+        content: "Write about your day!", 
+      },
+    });
+
+    return NextResponse.json({ data: entry });
+  } catch (error) {
+    console.error("Failed to create entry:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 };
-
-
-
-
-
-
-
-
-
