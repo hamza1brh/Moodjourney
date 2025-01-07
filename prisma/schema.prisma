@@ -30,7 +30,7 @@ model JournalEntry {
   updatedAt DateTime @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-
+  Content   String  @db.Text  
   analysis Analysis?
 
   @@index([userId])
