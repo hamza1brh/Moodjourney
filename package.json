@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.5",
+    "@huggingface/inference": "^3.1.5",
     "@prisma/client": "^6.1.0",
     "@types/node": "22.10.2",
     "@types/react": "19.0.2",
