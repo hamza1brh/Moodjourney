@@ -1,5 +1,9 @@
 import { HfInference } from "@huggingface/inference";
 
+
+
+// analyze function takes a journal entry and uses deepseek to extract mood subject from it 
+
 const client = new HfInference(process.env.HF_API_KEY);
 
 interface JournalAnalysis {
@@ -52,3 +56,6 @@ export const analyze = async (entry: string): Promise<JournalAnalysis> => {
     throw new Error("Failed to analyze journal entry");
   }
 };
+
+
+
