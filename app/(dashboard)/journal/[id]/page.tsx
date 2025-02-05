@@ -2,6 +2,8 @@ import Editor from "@/components/Editor";
 import { analyze } from "@/utils/ai";
 import { getUserByClerkId } from "@/utils/auth";
 
+import { prisma } from "@/utils/db";
+
 const getEntry = async (id) => {
   const user = await getUserByClerkId();
   const entry = await prisma.journalEntry.findUnique({
@@ -17,9 +19,9 @@ const getEntry = async (id) => {
 };
 
 // Example of how to use the analyze function
-const handleAnalyze = async () => {
-  const entry =
-    "Today was amazing! I got a promotion at work and celebrated with friends.";
+const handleAnalyze = async (entry) => {
+  // const entry =
+  //   "Today was amazing! I got a promotion at work and celebrated with friends.";
 
   try {
     const result = await analyze(entry);
@@ -29,10 +31,10 @@ const handleAnalyze = async () => {
   }
 };
 
-handleAnalyze();
-
 const EntryPage = async ({ params }) => {
-  const entry = await getEntry(params.id);
+  const { id } = await params; //  trying to synchroneously get the id from the params in a dynamic route causes errors , you need to await it before accessing its properties
+  const entry = await getEntry(id);
+  await handleAnalyze(entry.content);
   const analysisData = [
     { name: "Subject", value: "" },
     { name: "Summary", value: "" },

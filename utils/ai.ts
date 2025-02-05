@@ -1,8 +1,6 @@
 import { HfInference } from "@huggingface/inference";
 
-
-
-// analyze function takes a journal entry and uses deepseek to extract mood subject from it 
+// analyze function takes a journal entry and uses deepseek to extract mood subject from it
 
 const client = new HfInference(process.env.HF_API_KEY);
 
@@ -22,7 +20,7 @@ export const analyze = async (entry: string): Promise<JournalAnalysis> => {
     Entry: "${entry}"`;
 
     const response = await client.chatCompletion({
-      model: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+      model: "meta-llama/Llama-3.2-3B-Instruct",
       messages: [
         {
           role: "system",
@@ -56,6 +54,3 @@ export const analyze = async (entry: string): Promise<JournalAnalysis> => {
     throw new Error("Failed to analyze journal entry");
   }
 };
-
-
-
