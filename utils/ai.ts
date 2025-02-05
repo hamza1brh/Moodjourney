@@ -14,7 +14,7 @@ interface JournalAnalysis {
 export const analyze = async (entry: string): Promise<JournalAnalysis> => {
   try {
     const prompt = `Analyze this journal entry and respond ONLY with a JSON object.
-    Format: {"mood": "emotion", "subject": "main topic", "color": "mood color", "negative": "true/false"}
+    Format: {"mood": "emotion", "subject": "main topic", "summary" : "short summary of the journal entry" ,  "color": "mood color", "negative": "true/false" , }
     Do not include any other text or explanation.
     
     Entry: "${entry}"`;
