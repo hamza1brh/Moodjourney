@@ -7,7 +7,7 @@ const Analysis = ({ data }) => {
     <div className="border-l border-black/5">
       <div className="px-6 py-10" style={{ backgroundColor: color }}>
         {" "}
-        <h2 className="text-black text-2xl">analysis</h2>
+        <h2 className="text-white text-2xl">analysis</h2>
       </div>
       <div>
         <ul>

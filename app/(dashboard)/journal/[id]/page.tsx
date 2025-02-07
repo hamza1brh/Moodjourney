@@ -33,22 +33,23 @@ const handleAnalyze = async (entry) => {
 const EntryPage = async ({ params }) => {
   const { id } = await params; //  trying to synchroneously get the id from the params in a dynamic route causes errors , you need to await it before accessing its properties
   const entry = await getEntry(id);
-  const { mood, subject, color, negative, summary } = await handleAnalyze(
-    entry.content
-  );
+  let mood, subject, color, negative, summary;
+  //  { mood, subject, color, negative, summary } = await handleAnalyze(
+  //   entry.content
+  // );
 
   const analysisData = [
-    { name: "Subject", value: subject },
-    { name: "Summary", value: summary },
-    { name: "Mood", value: mood },
-    {name :"color" , value : color},
-    { name: "Negative", value: negative.toString() },
+    { name: "Subject", value: subject || null },
+    { name: "Summary", value: summary || null },
+    { name: "Mood", value: mood || null },
+    { name: "color", value: color || null },
+    { name: "Negative", value: /*negative.toString()*/ null },
   ];
 
   return (
     <div className="h-full w-full grid grid-cols-3 ">
       <div className="col-span-2">
-        <Editor entry={entry} />
+        <Editor entry={entry}  />
       </div>
       <Analysis data={analysisData} />
     </div>
