@@ -1,1 +1,1 @@
-export  const defaultEntry = {}
+export  const defaultEntry = {content :"" , }

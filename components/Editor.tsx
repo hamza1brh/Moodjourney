@@ -1,9 +1,10 @@
 "use client";
 
 import { updateEntry, createNewEntry } from "@/utils/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useAutoSave from "@/hooks/useAutoSave";
 import { usePathname, useRouter } from "next/navigation";
+import { saveEntryLocally } from "@/utils/storage";
 
 const Editor = ({ entry }) => {
   const [value, setValue] = useState(entry?.content || "");
@@ -14,64 +15,88 @@ const Editor = ({ entry }) => {
   const Router = useRouter();
   const pathname = usePathname(); // usePathname here at the top level of the component
 
-
-
-
   const handleRouteChange = (newPath) => {
-    if (pathname !== newPath && entry && !isNavigating) {
+    if (pathname !== newPath && entry && !isNavigating && value.trim()) {
       setIsNavigating(true);
+
+      const currentEntry = {
+        ...entry,
+        content: value,
+      };
+
+      saveEntryLocally(currentEntry);
+
       const confirmLeave = window.confirm(
-        "Changes you made may not be saved. Are you sure you want to leave?"
+        "Changes you made may not be saved in the cloud. Leave anyway?"
       );
+
       if (confirmLeave) {
-        createNewEntry(entry)
-          .then(() => {
-            Router.push(newPath);
-          })
-          .catch((error) => {
-            console.error("Error saving:", error);
-            alert("Error saving. Changes may be lost.");
-            setIsNavigating(false); // resetting in case of error
-          });
+        Router.push(newPath);
+        console.log("Entry saved locally and route changed");
       } else {
-        setIsNavigating(false); // reset the flag if user cancels
+        setIsNavigating(false);
+        console.log("Navigation cancelled");
       }
     }
   };
 
   const handleBeforeUnload = (event) => {
-    if (pathname === "/journal/new") {
-      if (entry) {
-        // will have to implement local storage save
-        // SaveLocally(entry);
-      } else {
-        console.log("No entry, allowing navigation.");
-      }
+    if (value.trim()) {
+      // Only save if there's content
+      const currentEntry = {
+        ...entry,
+        content: value,
+      };
+
+      console.log("Saving entry before unloading");
+      saveEntryLocally(currentEntry);
+      event.preventDefault();
+      event.returnValue = "";
     }
   };
 
+  useEffect(() => {
+    const events = {
+      beforeunload: handleBeforeUnload,
+      popstate: () => handleRouteChange(window.location.pathname),
+    };
 
+    Object.entries(events).forEach(([event, handler]) => {
+      window.addEventListener(event, handler);
+    });
 
-
-
-  useEffect(()=>{
-
-
-  } , []); 
-
-
-  
+    return () => {
+      Object.entries(events).forEach(([event, handler]) => {
+        window.removeEventListener(event, handler);
+      });
+    };
+  }, [handleBeforeUnload, handleRouteChange]);
 
   // Auto-save logic
   useAutoSave({
     value: value,
     callback: async (latestValue) => {
-      setIsLoading(true);
-      if (entryId) {
-        // save normally if an entry id already exists
-        await updateEntry(entryId, latestValue);
+      if (latestValue.trim()) {
+        setIsLoading(true);
+        try {
+          const currentEntry = {
+            ...entry,
+            content: latestValue,
+          };
+
+          // Always save locally first
+          console.log("Saving entry locally");
+          saveEntryLocally(currentEntry);
+
+          if (entryId) {
+            await updateEntry(entryId, latestValue);
+          }
+        } catch (error) {
+          console.error("Error during autosave:", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
-      setIsLoading(false);
     },
   });
 
@@ -79,6 +104,7 @@ const Editor = ({ entry }) => {
     <div className="w-full h-full">
       {IsLoading && <div>Loading ...</div>}
       <textarea
+        placeholder="What's on your mind?"
         className="w-full h-full p-8 text-xl text-black outline-none"
         value={value}
         onChange={(e) => setValue(e.target.value)}
