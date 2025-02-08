@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useDebounce from "./useDebounce";
 
-const useAutoSave = ({ value, callback, delay = 1000 }) => {
+const useAutoSave = ({ value, callback, delay = 1000 }: { value: any, callback: (value: any) => Promise<any>, delay?: number }) => {
   const debouncedValue = useDebounce(value, delay);
 
   const [isSaving, SetIsSaving] = useState(false);

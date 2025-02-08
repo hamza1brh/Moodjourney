@@ -5,7 +5,7 @@ import { prisma } from "@/utils/db";
 import Link from "next/link";
 
 const getEntries = async () => {
-  const user = getUserByClerkId();
+  const user = await getUserByClerkId();
   const entries = await prisma.journalEntry.findMany({
     where: {
       userId: user.id,
